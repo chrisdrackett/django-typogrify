@@ -77,11 +77,11 @@ def caps(text):
     text = force_unicode(text)
 
     from typogrify import smartypants
-        
+
     tokens = smartypants._tokenize(text)
     result = []
-    in_skipped_tag = False    
-    
+    in_skipped_tag = False
+
     cap_finder = re.compile(r"""(
                             (\b[A-Z\d]*        # Group 2: Any amount of caps and digits
                             [A-Z]\d*[A-Z]      # A cap string much at least include two caps (but they can have digits between them)
