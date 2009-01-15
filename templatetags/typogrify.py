@@ -1,4 +1,5 @@
 import re
+
 from django.conf import settings
 from django import template
 from django.utils.html import conditional_escape
@@ -74,12 +75,8 @@ def caps(text):
     u'<i><span class="caps">D.O.T.</span></i><span class="caps">HE34T</span><b><span class="caps">RFID</span></b>'
     """
     text = force_unicode(text)
-    try:
-        import smartypants
-    except ImportError:
-        if settings.DEBUG:
-            raise template.TemplateSyntaxError, "Error in {% caps %} filter: The Python SmartyPants library isn't installed."
-        return text
+
+    from typogrify import smartypants
         
     tokens = smartypants._tokenize(text)
     result = []
