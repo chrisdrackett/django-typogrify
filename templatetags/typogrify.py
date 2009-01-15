@@ -6,6 +6,8 @@ from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_unicode
 
+import smartypants as _smartypants
+
 register = template.Library()
 
 def amp(text):
@@ -76,9 +78,7 @@ def caps(text):
     """
     text = force_unicode(text)
 
-    from typogrify import smartypants
-
-    tokens = smartypants._tokenize(text)
+    tokens = _smartypants._tokenize(text)
     result = []
     in_skipped_tag = False
 
@@ -167,15 +167,9 @@ def smartypants(text):
     u'The &#8220;Green&#8221; man'
     """
     text = force_unicode(text)
-    try:
-        import smartypants
-    except ImportError:
-        if settings.DEBUG:
-            raise template.TemplateSyntaxError, "Error in {% smartypants %} filter: The Python smartypants library isn't installed."
-        return text
-    else:
-        output = smartypants.smartyPants(text)
-        return mark_safe(output)
+
+    output = _smartypants.smartyPants(text)
+    return mark_safe(output)
 smartypants.is_safe = True
 
 def titlecase(text):
