@@ -7,6 +7,7 @@ from django.utils.safestring import mark_safe
 from django.utils.encoding import force_unicode
 
 import typogrify.smartypants as _smartypants
+import typogrify.titlecase as _titlecase
 
 register = template.Library()
 
@@ -182,14 +183,8 @@ def titlecase(text):
     u'This Is Just an example.com'
     """
     text = force_unicode(text)
-    try:
-        import titlecase
-    except ImportError:
-        if settings.DEBUG:
-            raise template.TemplateSyntaxError, "Error in {% titlecase %} filter: The titlecase.py library isn't installed."
-        return text
-    else:
-        return titlecase.titlecase(text)
+
+    return _titlecase.titlecase(text)
 
 def typogrify(text):
     """The super typography filter
