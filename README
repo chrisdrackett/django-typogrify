@@ -12,11 +12,9 @@ Requirements
 ============
 
 ``typogrify`` is designed to work with `Django`_, and so requires a
-functioning installation of Django 0.96 or later. Also requires `the
-Python port of John Gruber's SmartyPants`_ for tokenization.
+functioning installation of Django 0.96 or later.
 
 .._ Django: http://www.djangoproject.com/
-.._ The Python port of John Gruber's SmartyPants: http://web.chad.org/projects/smartypants.py/
 
 
 Installation
