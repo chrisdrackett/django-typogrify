@@ -10,6 +10,9 @@ setup(
     packages = [
         "typogrify",
     ],
+    requires = [
+        'textile',
+    ],
     classifiers=[
         'Development Status :: 1',
         'Environment :: Web Environment',

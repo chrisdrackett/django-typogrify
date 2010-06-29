@@ -4,12 +4,34 @@ from django.conf import settings
 from django import template
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
-from django.utils.encoding import force_unicode
+from django.utils.encoding import smart_str, force_unicode
 
 import typogrify.smartypants as _smartypants
 import typogrify.titlecase as _titlecase
 
 register = template.Library()
+
+@register.filter
+def textile(value):
+    try:
+        import textile
+    except ImportError:
+        if settings.DEBUG:
+            raise template.TemplateSyntaxError("Error in {% textile %} filter: The Python textile library isn't installed.")
+        return force_unicode(value)
+    else:
+        return mark_safe(force_unicode(textile.textile(smart_str(value), encoding='utf-8', output='utf-8')))
+
+@register.filter
+def textile_restricted(value):
+    try:
+        import textile
+    except ImportError:
+        if settings.DEBUG:
+            raise template.TemplateSyntaxError, "Error in {% textile %} filter: The Python textile library isn't installed."
+        return force_unicode(value)
+    else:
+        return mark_safe(force_unicode(textile.textile_restricted(smart_str(value), noimage=False)))
 
 def amp(text):
     """Wraps apersands in HTML with ``<span class="amp">`` so they can be

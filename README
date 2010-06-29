@@ -15,7 +15,7 @@ Requirements
 functioning installation of Django 0.96 or later.
 
 .._ Django: http://www.djangoproject.com/
-
+.._ Textile: http://github.com/chrisdrackett/python-textile
 
 Installation
 ============
