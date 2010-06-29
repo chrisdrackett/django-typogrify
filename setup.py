@@ -17,3 +17,4 @@ setup(
         'Programming Language :: Python',
         'Topic :: Utilities'
     ],
+)
