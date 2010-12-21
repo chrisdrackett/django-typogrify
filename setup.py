@@ -9,6 +9,7 @@ setup(
     url='http://github.com/chrisdrackett/django-typogrify',
     packages = [
         "typogrify",
+        "typogrify.templatetags",
     ],
     requires = [
         'textile',
