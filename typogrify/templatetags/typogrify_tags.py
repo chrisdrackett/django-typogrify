@@ -317,7 +317,7 @@ def fuzzydate(value, cutoff=180):
         (1.0, lambda n : ungettext('day', 'days', n)),
     )
     
-    if abs(delta.days) >= cutoff:
+    if abs(delta.days) <= cutoff:
         for i, (chunk, name) in enumerate(chunks):
                 if abs(delta.days) >= chunk:
                     count = abs(round(delta.days / chunk, 0))
