@@ -1,9 +1,11 @@
 import re
+from datetime import date
 
-from django.conf import settings
 from django import template
-from django.utils.html import conditional_escape
+from django.conf import settings
 from django.utils.safestring import mark_safe
+from django.utils.html import conditional_escape
+from django.utils.translation import ungettext, ugettext
 from django.utils.encoding import smart_str, force_unicode
 
 import typogrify.smartypants as _smartypants
@@ -33,6 +35,7 @@ def textile_restricted(value):
     else:
         return mark_safe(force_unicode(textile.textile_restricted(smart_str(value), noimage=False)))
 
+@register.filter
 def amp(text):
     """Wraps apersands in HTML with ``<span class="amp">`` so they can be
     styled with CSS. Apersands are also normalized to ``&amp;``. Requires 
@@ -44,22 +47,22 @@ def amp(text):
     u'One <span class="amp">&amp;</span> two'
     >>> amp('One &#38; two')
     u'One <span class="amp">&amp;</span> two'
-
+    
     >>> amp('One&nbsp;&amp;&nbsp;two')
     u'One&nbsp;<span class="amp">&amp;</span>&nbsp;two'
-
+    
     It won't mess up & that are already wrapped, in entities or URLs
-
+    
     >>> amp('One <span class="amp">&amp;</span> two')
     u'One <span class="amp">&amp;</span> two'
     >>> amp('&ldquo;this&rdquo; & <a href="/?that&amp;test">that</a>')
     u'&ldquo;this&rdquo; <span class="amp">&amp;</span> <a href="/?that&amp;test">that</a>'
-
+    
     It should ignore standalone amps that are in attributes
     >>> amp('<link href="xyz.html" title="One & Two">xyz</link>')
     u'<link href="xyz.html" title="One & Two">xyz</link>'
     """
-    text = force_unicode(text)
+    
     # tag_pattern from http://haacked.com/archive/2004/10/25/usingregularexpressionstomatchhtml.aspx
     # it kinda sucks but it fixes the standalone amps in attributes bug
     tag_pattern = '</?\w+((\s+\w+(\s*=\s*(?:".*?"|\'.*?\'|[^\'">\s]+))?)+\s*|\s*)/?>'
@@ -74,6 +77,7 @@ def amp(text):
     return mark_safe(output)
 amp.is_safe = True
 
+@register.filter
 def caps(text):
     """Wraps multiple capital letters in ``<span class="caps">`` 
     so they can be styled with CSS. 
@@ -85,26 +89,25 @@ def caps(text):
     
     >>> caps("<PRE>CAPS</pre> more CAPS")
     u'<PRE>CAPS</pre> more <span class="caps">CAPS</span>'
-
+    
     >>> caps("A message from 2KU2 with digits")
     u'A message from <span class="caps">2KU2</span> with digits'
-        
+    
     >>> caps("Dotted caps followed by spaces should never include them in the wrap D.O.T.   like so.")
     u'Dotted caps followed by spaces should never include them in the wrap <span class="caps">D.O.T.</span>  like so.'
-
+    
     All caps with with apostrophes in them shouldn't break. Only handles dump apostrophes though.
     >>> caps("JIMMY'S")
     u'<span class="caps">JIMMY\\'S</span>'
-
+    
     >>> caps("<i>D.O.T.</i>HE34T<b>RFID</b>")
     u'<i><span class="caps">D.O.T.</span></i><span class="caps">HE34T</span><b><span class="caps">RFID</span></b>'
     """
-    text = force_unicode(text)
-
+    
     tokens = _smartypants._tokenize(text)
     result = []
     in_skipped_tag = False
-
+    
     cap_finder = re.compile(r"""(
                             (\b[A-Z\d]*        # Group 2: Any amount of caps and digits
                             [A-Z]\d*[A-Z]      # A cap string much at least include two caps (but they can have digits between them)
@@ -113,7 +116,7 @@ def caps(text):
                             (?:[A-Z]+\.\s?)+)  # Followed by the same thing at least once more
                             (?:\s|\b|$))
                             """, re.VERBOSE)
-
+    
     def _cap_wrapper(matchobj):
         """This is necessary to keep dotted cap strings to pick up extra spaces"""
         if matchobj.group(2):
@@ -126,9 +129,8 @@ def caps(text):
                 caps = matchobj.group(3)
                 tail = ''
             return """<span class="caps">%s</span>%s""" % (caps, tail)
-
-    tags_to_skip_regex = re.compile("<(/)?(?:pre|code|kbd|script|math)[^>]*>", re.IGNORECASE)
     
+    tags_to_skip_regex = re.compile("<(/)?(?:pre|code|kbd|script|math)[^>]*>", re.IGNORECASE)
     
     for token in tokens:
         if token[0] == "tag":
@@ -148,6 +150,7 @@ def caps(text):
     return mark_safe(output)
 caps.is_safe = True
 
+@register.filter
 def initial_quotes(text):
     """Wraps initial quotes in ``class="dquo"`` for double quotes or  
     ``class="quo"`` for single quotes. Works in these block tags ``(h1-h6, p, li, dt, dd)``
@@ -164,7 +167,7 @@ def initial_quotes(text):
     >>> initial_quotes('&#8220;With smartypanted quotes&#8221;')
     u'<span class="dquo">&#8220;</span>With smartypanted quotes&#8221;'
     """
-    text = force_unicode(text)
+    
     quote_finder = re.compile(r"""((<(p|h[1-6]|li|dt|dd)[^>]*>|^)              # start with an opening p, h1-6, li, dd, dt or the start of the string
                                   \s*                                          # optional white space! 
                                   (<(a|em|span|strong|i|b)[^>]*>\s*)*)         # optional opening inline tags, with more optional white space for each.
@@ -183,51 +186,32 @@ def initial_quotes(text):
     return mark_safe(output)
 initial_quotes.is_safe = True
 
+@register.filter
 def smartypants(text):
     """Applies smarty pants to curl quotes.
     
     >>> smartypants('The "Green" man')
     u'The &#8220;Green&#8221; man'
     """
-    text = force_unicode(text)
-
-    output = _smartypants.smartyPants(text)
-    return mark_safe(output)
+    
+    return _smartypants.smartyPants(text)
 smartypants.is_safe = True
 
+@register.filter
 def titlecase(text):
     """Support for titlecase.py's titlecasing
-
+    
     >>> titlecase("this V that")
     u'This v That'
-
+    
     >>> titlecase("this is just an example.com")
     u'This Is Just an example.com'
     """
-    text = force_unicode(text)
-
+    
     return _titlecase.titlecase(text)
+titlecase.is_safe = True
 
-def typogrify(text):
-    """The super typography filter
-    
-    Applies the following filters: widont, smartypants, caps, amp, initial_quotes
-    
-    >>> typogrify('<h2>"Jayhawks" & KU fans act extremely obnoxiously</h2>')
-    u'<h2><span class="dquo">&#8220;</span>Jayhawks&#8221; <span class="amp">&amp;</span> <span class="caps">KU</span> fans act extremely&nbsp;obnoxiously</h2>'
-
-    Each filters properly handles autoescaping.
-    >>> conditional_escape(typogrify('<h2>"Jayhawks" & KU fans act extremely obnoxiously</h2>'))
-    u'<h2><span class="dquo">&#8220;</span>Jayhawks&#8221; <span class="amp">&amp;</span> <span class="caps">KU</span> fans act extremely&nbsp;obnoxiously</h2>'
-    """
-    text = force_unicode(text)
-    text = amp(text)
-    text = widont(text)
-    text = smartypants(text)
-    text = caps(text)
-    text = initial_quotes(text)
-    return text
-
+@register.filter
 def widont(text):
     """Replaces the space between the last two words in a string with ``&nbsp;``
     Works in these block tags ``(h1-h6, p, li, dd, dt)`` and also accounts for 
@@ -268,7 +252,7 @@ def widont(text):
     >>> widont('<div><p>But divs with paragraphs do!</p></div>')
     u'<div><p>But divs with paragraphs&nbsp;do!</p></div>'
     """
-    text = force_unicode(text)
+    
     widont_finder = re.compile(r"""((?:</?(?:a|em|span|strong|i|b)[^>]*>)|[^<>\s]) # must be proceeded by an approved inline opening or closing tag or a nontag/nonspace
                                    \s+                                             # the space to replace
                                    ([^<>\s]+                                       # must be flollowed by non-tag non-space characters
@@ -276,17 +260,103 @@ def widont(text):
                                    (</(a|em|span|strong|i|b)>\s*)*                 # optional closing inline tags with optional white space after each
                                    ((</(p|h[1-6]|li|dt|dd)>)|$))                   # end with a closing p, h1-6, li or the end of the string
                                    """, re.VERBOSE)
+    
     output = widont_finder.sub(r'\1&nbsp;\2', text)
     return mark_safe(output)
 widont.is_safe = True
 
-register.filter('amp', amp)
-register.filter('caps', caps)
-register.filter('initial_quotes', initial_quotes)
-register.filter('smartypants', smartypants)
-register.filter('titlecase', titlecase)
-register.filter('typogrify', typogrify)
-register.filter('widont', widont)
+@register.filter
+def fuzzydate(value, cutoff=180):
+    """
+    * takes a value (date) and cutoff (in days)
+    
+    If the date is within 1 day of Today:
+        Returns
+            'today'
+            'yesterday'
+            'tomorrow'
+    
+    If the date is within Today +/- the cutoff:
+        Returns
+            '2 months ago'
+            'in 3 weeks'
+            '2 years ago'
+            etc.
+    
+    
+    if this date is from the current year, but outside the cutoff:
+        returns the value for 'CURRENT_YEAR_DATE_FORMAT' in settings if it exists.
+        Otherwise returns:
+            January 10<span class="ord">th</span>
+            December 1<span class="ord">st</span>
+    
+    if the date is not from the current year and outside the cutoff:
+        returns the value for 'DATE_FORMAT' in settings if it exists.
+    """
+    
+    try:
+        value = date(value.year, value.month, value.day)
+    except AttributeError:
+        # Passed value wasn't a date object
+        return value
+    except ValueError:
+        # Date arguments out of range
+        return value
+    
+    today = date.today()
+    delta = value - today
+    
+    if delta.days == 0: return u"today"
+    elif delta.days == -1: return u"yesterday"
+    elif delta.days == 1: return u"tomorrow"
+    
+    chunks = (
+        (365.0, lambda n: ungettext('year', 'years', n)),
+        (30.0, lambda n: ungettext('month', 'months', n)),
+        (7.0, lambda n : ungettext('week', 'weeks', n)),
+        (1.0, lambda n : ungettext('day', 'days', n)),
+    )
+    
+    if abs(delta.days) >= cutoff:
+        for i, (chunk, name) in enumerate(chunks):
+                if abs(delta.days) >= chunk:
+                    count = abs(round(delta.days / chunk, 0))
+                    break
+        
+        date_str = ugettext('%(number)d %(type)s') % {'number': count, 'type': name(count)}
+        
+        if delta.days > 0: return "in " + date_str
+        else: return date_str + " ago"
+    else:
+        if value.year == today.year:
+            format = getattr(settings, "CURRENT_YEAR_DATE_FORMAT", "F jS")
+        else:
+            format = getattr(settings, "DATE_FORMAT", "F jS, Y")
+        
+        return template.defaultfilters.date(value, format)
+fuzzydate.is_safe = True
+
+@register.filter
+def typogrify(text):
+    """The super typography filter
+    
+    Applies the following filters: widont, smartypants, caps, amp, initial_quotes
+    
+    >>> typogrify('<h2>"Jayhawks" & KU fans act extremely obnoxiously</h2>')
+    u'<h2><span class="dquo">&#8220;</span>Jayhawks&#8221; <span class="amp">&amp;</span> <span class="caps">KU</span> fans act extremely&nbsp;obnoxiously</h2>'
+
+    Each filters properly handles autoescaping.
+    >>> conditional_escape(typogrify('<h2>"Jayhawks" & KU fans act extremely obnoxiously</h2>'))
+    u'<h2><span class="dquo">&#8220;</span>Jayhawks&#8221; <span class="amp">&amp;</span> <span class="caps">KU</span> fans act extremely&nbsp;obnoxiously</h2>'
+    """
+    text = force_unicode(text)
+    text = amp(text)
+    text = widont(text)
+    text = smartypants(text)
+    text = caps(text)
+    text = initial_quotes(text)
+    
+    return text
 
 def _test():
     import doctest
