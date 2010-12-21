@@ -86,6 +86,13 @@ strong, span, b, i.
 titlecase
 ---------
 
+http://daringfireball.net/2008/05/title_case
+
+number_suffix
+-------------
+
+wraps number suffix's in <span class="ord"></span> so they can be styled.
+
 fuzzydate
 ---------
 (uses code from http://djangosnippets.org/snippets/1347/)

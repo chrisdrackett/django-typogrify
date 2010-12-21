@@ -73,8 +73,7 @@ def amp(text):
         text = amp_finder.sub(r"""\1<span class="amp">&amp;</span>\3""", groups.group('text'))
         suffix = groups.group('suffix') or ''
         return prefix + text + suffix
-    output = intra_tag_finder.sub(_amp_process, text)
-    return mark_safe(output)
+    return intra_tag_finder.sub(_amp_process, text)
 amp.is_safe = True
 
 @register.filter
@@ -110,7 +109,7 @@ def caps(text):
     
     cap_finder = re.compile(r"""(
                             (\b[A-Z\d]*        # Group 2: Any amount of caps and digits
-                            [A-Z]\d*[A-Z]      # A cap string much at least include two caps (but they can have digits between them)
+                            [A-Z]\d*[A-Z]      # A cap string must at least include two caps (but they can have digits between them)
                             [A-Z\d']*\b)       # Any amount of caps and digits or dumb apostsrophes
                             | (\b[A-Z]+\.\s?   # OR: Group 3: Some caps, followed by a '.' and an optional space
                             (?:[A-Z]+\.\s?)+)  # Followed by the same thing at least once more
@@ -146,9 +145,34 @@ def caps(text):
                 result.append(token[1])
             else:
                 result.append(cap_finder.sub(_cap_wrapper, token[1]))
-    output = "".join(result)
-    return mark_safe(output)
+    return "".join(result)
 caps.is_safe = True
+
+@register.filter
+def number_suffix(text):
+    """Wraps date suffix in <span class="ord">
+    so they can be styled with CSS.
+    
+    >>> number_suffix("10th")
+    u'10<span class="rod">th</span>'
+    
+    Uses the smartypants tokenizer to not screw with HTML or with tags it shouldn't.
+    
+    """
+    
+    tokens = _smartypants._tokenize(text)
+    result = []
+    in_skipped_tag = False
+    
+    suffix_finder = re.compile(r'(?P<number>[\d]+)(?P<ord>st|nd|rd|th)')
+    
+    def _suffix_process(groups):
+        number = groups.group('number')
+        suffix = groups.group('ord')
+        
+        return "%s<span class='ord'>%s</span>" % (number, suffix)
+    return suffix_finder.sub(_suffix_process, text)
+number_suffix.is_safe = True
 
 @register.filter
 def initial_quotes(text):
@@ -355,6 +379,7 @@ def typogrify(text):
     text = smartypants(text)
     text = caps(text)
     text = initial_quotes(text)
+    text = number_suffix(text)
     
     return text
 
