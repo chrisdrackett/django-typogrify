@@ -382,6 +382,7 @@ def typogrify(text):
     text = number_suffix(text)
     
     return text
+typogrify.is_safe = True
 
 def _test():
     import doctest
