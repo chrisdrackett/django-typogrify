@@ -12,7 +12,6 @@ typogrify is designed to work with Django, and so requires a
 functioning installation of Django 0.96 or later.
 
 * **Django**: http://www.djangoproject.com/
-* **Textile**: http://github.com/chrisdrackett/python-textile
 
 Installation
 ============

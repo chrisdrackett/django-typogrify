@@ -1,0 +1,1 @@
+-e git+http://github.com/chrisdrackett/python-textile.git@e04bcaae3e274f71808f0f33f8a1a48f0d2e13b9#egg=python-textile-2.1.3
