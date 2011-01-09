@@ -7,7 +7,6 @@ setup(
     author='Christian Metts, Chris Drackett',
     author_email='chris@shelfworthy.com',
     url='http://github.com/chrisdrackett/django-typogrify',
-    install_requires=read_file('requirements.txt'),
     packages = [
         "typogrify",
         "typogrify.templatetags",
