@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
  
 setup(
-    name='typogrify',
+    name='django-typogrify',
     version='1.2',
     description='Make type not look like crap (for django apps)',
     author='Christian Metts, Chris Drackett',
