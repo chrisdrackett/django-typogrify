@@ -1,5 +1,6 @@
 import re
 from datetime import date
+import smartypants as _smartypants
 
 from django import template
 from django.conf import settings
@@ -8,7 +9,6 @@ from django.utils.html import conditional_escape
 from django.utils.translation import ungettext, ugettext
 from django.utils.encoding import smart_str, force_unicode
 
-import typogrify.smartypants as _smartypants
 import typogrify.titlecase as _titlecase
 
 register = template.Library()
