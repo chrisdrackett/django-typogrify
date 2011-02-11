@@ -20,9 +20,12 @@ setup(
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         # 'Intended Audience :: Designers',
+        'Natural Language :: English',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Topic :: Utilities'
+        'Framework :: Django',
+        'Topic :: Utilities',
+        'Topic :: Text Processing'
     ],
 )
