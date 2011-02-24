@@ -13,6 +13,24 @@ import typogrify.titlecase as _titlecase
 
 register = template.Library()
 
+def smart_filter(fn):
+    '''
+    Escapes filter's content based on template autoescape mode and marks output as safe
+    '''
+    def wrapper(text, autoescape=None):
+        if autoescape:
+            esc = conditional_escape
+        else:
+            esc = lambda x: x
+
+        return mark_safe(fn(esc(text)))
+    wrapper.needs_autoescape = True
+    
+    register.filter(fn.__name__, wrapper)
+    return wrapper
+
+
+
 @register.filter
 def textile(value):
     try:
@@ -35,8 +53,8 @@ def textile_restricted(value):
     else:
         return mark_safe(force_unicode(textile.textile_restricted(smart_str(value), noimage=False)))
 
-@register.filter
-def amp(text):
+@smart_filter
+def amp(text, autoescape=None):
     """Wraps apersands in HTML with ``<span class="amp">`` so they can be
     styled with CSS. Apersands are also normalized to ``&amp;``. Requires 
     ampersands to have whitespace or an ``&nbsp;`` on both sides.
@@ -74,9 +92,9 @@ def amp(text):
         suffix = groups.group('suffix') or ''
         return prefix + text + suffix
     return intra_tag_finder.sub(_amp_process, text)
-amp.is_safe = True
 
-@register.filter
+
+@smart_filter
 def caps(text):
     """Wraps multiple capital letters in ``<span class="caps">`` 
     so they can be styled with CSS. 
@@ -146,9 +164,10 @@ def caps(text):
             else:
                 result.append(cap_finder.sub(_cap_wrapper, token[1]))
     return "".join(result)
-caps.is_safe = True
 
-@register.filter
+
+
+@smart_filter
 def number_suffix(text):
     """Wraps date suffix in <span class="ord">
     so they can be styled with CSS.
@@ -172,9 +191,8 @@ def number_suffix(text):
         
         return "%s<span class='ord'>%s</span>" % (number, suffix)
     return suffix_finder.sub(_suffix_process, text)
-number_suffix.is_safe = True
 
-@register.filter
+@smart_filter
 def initial_quotes(text):
     """Wraps initial quotes in ``class="dquo"`` for double quotes or  
     ``class="quo"`` for single quotes. Works in these block tags ``(h1-h6, p, li, dt, dd)``
@@ -207,10 +225,10 @@ def initial_quotes(text):
             quote = matchobj.group(8)
         return """%s<span class="%s">%s</span>""" % (matchobj.group(1), classname, quote) 
     output = quote_finder.sub(_quote_wrapper, text)
-    return mark_safe(output)
-initial_quotes.is_safe = True
+    return output
 
-@register.filter
+
+@smart_filter
 def smartypants(text):
     """Applies smarty pants to curl quotes.
     
@@ -219,9 +237,9 @@ def smartypants(text):
     """
     
     return _smartypants.smartyPants(text)
-smartypants.is_safe = True
 
-@register.filter
+
+@smart_filter
 def titlecase(text):
     """Support for titlecase.py's titlecasing
     
@@ -233,9 +251,9 @@ def titlecase(text):
     """
     
     return _titlecase.titlecase(text)
-titlecase.is_safe = True
 
-@register.filter
+
+@smart_filter
 def widont(text):
     """Replaces the space between the last two words in a string with ``&nbsp;``
     Works in these block tags ``(h1-h6, p, li, dd, dt)`` and also accounts for 
@@ -286,8 +304,8 @@ def widont(text):
                                    """, re.VERBOSE)
     
     output = widont_finder.sub(r'\1&nbsp;\2', text)
-    return mark_safe(output)
-widont.is_safe = True
+    return output
+
 
 @register.filter
 def fuzzydate(value, cutoff=180):
@@ -360,8 +378,9 @@ def fuzzydate(value, cutoff=180):
         return template.defaultfilters.date(value, format)
 fuzzydate.is_safe = True
 
-@register.filter
-def typogrify(text, autoescape=None):
+
+@smart_filter
+def typogrify(text):
     """The super typography filter
     
     Applies the following filters: widont, smartypants, caps, amp, initial_quotes
@@ -373,14 +392,6 @@ def typogrify(text, autoescape=None):
     >>> conditional_escape(typogrify('<h2>"Jayhawks" & KU fans act extremely obnoxiously</h2>'))
     u'<h2><span class="dquo">&#8220;</span>Jayhawks&#8221; <span class="amp">&amp;</span> <span class="caps">KU</span> fans act extremely&nbsp;obnoxiously</h2>'
     """
-    
-    if autoescape:
-        esc = conditional_escape
-    else:
-        esc = lambda x: x
-    
-    text = esc(text)
-    
     text = force_unicode(text)
     text = amp(text)
     text = widont(text)
@@ -389,8 +400,7 @@ def typogrify(text, autoescape=None):
     text = initial_quotes(text)
     text = number_suffix(text)
     
-    return mark_safe(text)
-typogrify.needs_autoescape = True
+    return text
 
 def _test():
     import doctest
