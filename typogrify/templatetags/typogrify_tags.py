@@ -361,18 +361,26 @@ def fuzzydate(value, cutoff=180):
 fuzzydate.is_safe = True
 
 @register.filter
-def typogrify(text):
+def typogrify(text, autoescape=None):
     """The super typography filter
     
     Applies the following filters: widont, smartypants, caps, amp, initial_quotes
     
     >>> typogrify('<h2>"Jayhawks" & KU fans act extremely obnoxiously</h2>')
     u'<h2><span class="dquo">&#8220;</span>Jayhawks&#8221; <span class="amp">&amp;</span> <span class="caps">KU</span> fans act extremely&nbsp;obnoxiously</h2>'
-
+    
     Each filters properly handles autoescaping.
     >>> conditional_escape(typogrify('<h2>"Jayhawks" & KU fans act extremely obnoxiously</h2>'))
     u'<h2><span class="dquo">&#8220;</span>Jayhawks&#8221; <span class="amp">&amp;</span> <span class="caps">KU</span> fans act extremely&nbsp;obnoxiously</h2>'
     """
+    
+    if autoescape:
+        esc = conditional_escape
+    else:
+        esc = lambda x: x
+    
+    text = esc(text)
+    
     text = force_unicode(text)
     text = amp(text)
     text = widont(text)
@@ -381,8 +389,8 @@ def typogrify(text):
     text = initial_quotes(text)
     text = number_suffix(text)
     
-    return text
-typogrify.is_safe = True
+    return mark_safe(text)
+typogrify.needs_autoescape = True
 
 def _test():
     import doctest
