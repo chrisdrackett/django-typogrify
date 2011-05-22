@@ -329,8 +329,8 @@ def fuzzydate(value, cutoff=180):
     if this date is from the current year, but outside the cutoff:
         returns the value for 'CURRENT_YEAR_DATE_FORMAT' in settings if it exists.
         Otherwise returns:
-            January 10<span class="ord">th</span>
-            December 1<span class="ord">st</span>
+            January 10th
+            December 1st
     
     if the date is not from the current year and outside the cutoff:
         returns the value for 'DATE_FORMAT' in settings if it exists.
