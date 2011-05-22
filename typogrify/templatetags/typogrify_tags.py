@@ -373,7 +373,7 @@ def fuzzydate(value, cutoff=180):
         if value.year == today.year:
             format = getattr(settings, "CURRENT_YEAR_DATE_FORMAT", "F jS")
         else:
-            format = getattr(settings, "DATE_FORMAT", "F jS, Y")
+            format = getattr(settings, "DATE_FORMAT")
         
         return template.defaultfilters.date(value, format)
 fuzzydate.is_safe = True

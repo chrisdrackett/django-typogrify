@@ -1,10 +1,14 @@
 from datetime import datetime, timedelta
 
 from django.test import TestCase
+from django.conf import settings
 
 from typogrify.templatetags.typogrify_tags import fuzzydate
 
 class TestFuzzyDate(TestCase):
+    def setup(self):
+        settings.DATE_FORMAT = "F jS, Y"
+    
     def test_returns_yesterday(self):
         yesterday = datetime.now() - timedelta(hours=24)
         self.assertEquals(fuzzydate(yesterday), "yesterday")
@@ -25,7 +29,7 @@ class TestFuzzyDate(TestCase):
         testdate = datetime.strptime("%s/10/10" % now.year, "%Y/%m/%d")
         
         expected = "October 10th"
-        self.assertEquals(fuzzydate(testdate), expected)
+        self.assertEquals(fuzzydate(testdate, 1), expected)
     
     def test_formats_other_years(self):
         testdate = datetime.strptime("1984/10/10", "%Y/%m/%d")
