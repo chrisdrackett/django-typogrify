@@ -179,10 +179,6 @@ def number_suffix(text):
     
     """
     
-    tokens = _smartypants._tokenize(text)
-    result = []
-    in_skipped_tag = False
-    
     suffix_finder = re.compile(r'(?P<number>[\d]+)(?P<ord>st|nd|rd|th)')
     
     def _suffix_process(groups):
