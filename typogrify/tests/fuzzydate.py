@@ -6,7 +6,7 @@ from django.conf import settings
 from typogrify.templatetags.typogrify_tags import fuzzydate
 
 class TestFuzzyDate(TestCase):
-    def setup(self):
+    def setUp(self):
         settings.DATE_FORMAT = "F jS, Y"
     
     def test_returns_yesterday(self):
