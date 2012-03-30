@@ -14,7 +14,6 @@ setup(
         "typogrify.templatetags",
     ],
     install_requires = [
-        'textile',
         'smartypants>=1.6'
     ],
     classifiers=[

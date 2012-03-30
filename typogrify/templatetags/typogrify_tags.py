@@ -29,30 +29,6 @@ def smart_filter(fn):
     register.filter(fn.__name__, wrapper)
     return wrapper
 
-
-
-@register.filter
-def textile(value):
-    try:
-        import textile
-    except ImportError:
-        if settings.DEBUG:
-            raise template.TemplateSyntaxError("Error in {% textile %} filter: The Python textile library isn't installed.")
-        return force_unicode(value)
-    else:
-        return mark_safe(force_unicode(textile.textile(smart_str(value), encoding='utf-8', output='utf-8')))
-
-@register.filter
-def textile_restricted(value):
-    try:
-        import textile
-    except ImportError:
-        if settings.DEBUG:
-            raise template.TemplateSyntaxError, "Error in {% textile %} filter: The Python textile library isn't installed."
-        return force_unicode(value)
-    else:
-        return mark_safe(force_unicode(textile.textile_restricted(smart_str(value), noimage=False)))
-
 @smart_filter
 def amp(text, autoescape=None):
     """Wraps apersands in HTML with ``<span class="amp">`` so they can be
