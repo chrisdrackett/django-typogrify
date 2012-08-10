@@ -116,3 +116,11 @@ Applies all of the following filters, in order:
 * smartypants
 * caps
 * initial_quotes
+
+Examples
+========
+
+Apply all `django-typogrify` filters to template output:
+
+    {% load typogrify_tags %}
+    {{ blog_post.contents|typogrify }}
