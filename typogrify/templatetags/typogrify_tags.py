@@ -378,7 +378,7 @@ def super_fuzzydate(value):
         end_of_week = today + timedelta(days=7-today.isoweekday())
         if value <= end_of_week:
             # return the name of the day (Wednesday)
-            return template.defaultfilters.date(value, "l")
+            return u'this %s' % template.defaultfilters.date(value, "l")
 
         end_of_next_week = end_of_week + timedelta(weeks=1)
         if value <= end_of_next_week:
@@ -400,7 +400,7 @@ def super_fuzzydate(value):
         end_of_next_month = date(today.year, today.month+1, calendar.monthrange(today.year, today.month)[1])
         if value <= end_of_next_month:
             # if we're in next month
-            return 'next month'
+            return u'next month'
 
         # the last day of the year
         end_of_year = date(today.year, 12, 31)
@@ -411,9 +411,9 @@ def super_fuzzydate(value):
         # the last day of next year
         end_of_next_year = date(today.year+1, 12, 31)
         if value <= end_of_next_year:
-            return 'next %s' % template.defaultfilters.date(value, "F")
+            return u'next %s' % template.defaultfilters.date(value, "F")
 
-        return template.defaultfilters.date(value, "F Y")
+        return template.defaultfilters.date(value, "Y")
     else:
         # TODO add the past
         return fuzzydate(value)
