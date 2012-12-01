@@ -397,7 +397,12 @@ def super_fuzzydate(value):
             elif value <= end_of_next_week + timedelta(weeks=4):
                 return u"in five weeks"
 
-        end_of_next_month = date(today.year, today.month+1, calendar.monthrange(today.year, today.month)[1])
+        if today.month == 12:
+            next_month = 1
+        else:
+            next_month = today.month + 1
+
+        end_of_next_month = date(today.year, next_month, calendar.monthrange(today.year, today.month)[1])
         if value <= end_of_next_month:
             # if we're in next month
             return u'next month'
