@@ -209,7 +209,7 @@ def smartypants(text):
     u'The &#8220;Green&#8221; man'
     """
 
-    return _smartypants.smartyPants(text)
+    return _smartypants.smartypants(text)
 
 
 @smart_filter
