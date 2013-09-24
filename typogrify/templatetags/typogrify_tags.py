@@ -8,11 +8,12 @@ from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.utils.html import conditional_escape
 from django.utils.translation import ungettext, ugettext
-from django.utils.encoding import smart_str, force_unicode
+from django.utils.encoding import force_unicode
 
 import typogrify.titlecase as _titlecase
 
 register = template.Library()
+
 
 def smart_filter(fn):
     '''
@@ -29,6 +30,7 @@ def smart_filter(fn):
 
     register.filter(fn.__name__, wrapper)
     return wrapper
+
 
 @smart_filter
 def amp(text, autoescape=None):
@@ -63,6 +65,7 @@ def amp(text, autoescape=None):
     tag_pattern = '</?\w+((\s+\w+(\s*=\s*(?:".*?"|\'.*?\'|[^\'">\s]+))?)+\s*|\s*)/?>'
     amp_finder = re.compile(r"(\s|&nbsp;)(&|&amp;|&\#38;)(\s|&nbsp;)")
     intra_tag_finder = re.compile(r'(?P<prefix>(%s)?)(?P<text>([^<]*))(?P<suffix>(%s)?)' % (tag_pattern, tag_pattern))
+
     def _amp_process(groups):
         prefix = groups.group('prefix') or ''
         text = amp_finder.sub(r"""\1<span class="amp">&amp;</span>\3""", groups.group('text'))
@@ -131,7 +134,7 @@ def caps(text):
             # Don't mess with tags.
             result.append(token[1])
             close_match = tags_to_skip_regex.match(token[1])
-            if close_match and close_match.group(1) == None:
+            if close_match and close_match.group(1) is None:
                 in_skipped_tag = True
             else:
                 in_skipped_tag = False
@@ -141,7 +144,6 @@ def caps(text):
             else:
                 result.append(cap_finder.sub(_cap_wrapper, token[1]))
     return "".join(result)
-
 
 
 @smart_filter
@@ -164,6 +166,7 @@ def number_suffix(text):
 
         return "%s<span class='ord'>%s</span>" % (number, suffix)
     return suffix_finder.sub(_suffix_process, text)
+
 
 @smart_filter
 def initial_quotes(text):
@@ -189,6 +192,7 @@ def initial_quotes(text):
                                   (("|&ldquo;|&\#8220;)|('|&lsquo;|&\#8216;))  # Find me a quote! (only need to find the left quotes and the primes)
                                                                                # double quotes are in group 7, singles in group 8
                                   """, re.VERBOSE)
+
     def _quote_wrapper(matchobj):
         if matchobj.group(7):
             classname = "dquo"
@@ -279,6 +283,7 @@ def widont(text):
     output = widont_finder.sub(r'\1&nbsp;\2', text)
     return output
 
+
 @register.filter
 def fuzzydate(value, cutoff=180):
     """
@@ -320,15 +325,18 @@ def fuzzydate(value, cutoff=180):
     today = date.today()
     delta = value - today
 
-    if delta.days == 0: return u"today"
-    elif delta.days == -1: return u"yesterday"
-    elif delta.days == 1: return u"tomorrow"
+    if delta.days == 0:
+        return u"today"
+    elif delta.days == -1:
+        return u"yesterday"
+    elif delta.days == 1:
+        return u"tomorrow"
 
     chunks = (
         (365.0, lambda n: ungettext('year', 'years', n)),
         (30.0, lambda n: ungettext('month', 'months', n)),
-        (7.0, lambda n : ungettext('week', 'weeks', n)),
-        (1.0, lambda n : ungettext('day', 'days', n)),
+        (7.0, lambda n: ungettext('week', 'weeks', n)),
+        (1.0, lambda n: ungettext('day', 'days', n)),
     )
 
     if abs(delta.days) <= cutoff:
@@ -339,8 +347,10 @@ def fuzzydate(value, cutoff=180):
 
         date_str = ugettext('%(number)d %(type)s') % {'number': count, 'type': name(count)}
 
-        if delta.days > 0: return "in " + date_str
-        else: return date_str + " ago"
+        if delta.days > 0:
+            return "in " + date_str
+        else:
+            return date_str + " ago"
     else:
         if value.year == today.year:
             format = getattr(settings, "CURRENT_YEAR_DATE_FORMAT", "F jS")
@@ -349,6 +359,7 @@ def fuzzydate(value, cutoff=180):
 
         return template.defaultfilters.date(value, format)
 fuzzydate.is_safe = True
+
 
 @register.filter
 def super_fuzzydate(value):
@@ -375,7 +386,7 @@ def super_fuzzydate(value):
 
     # if we're in the future...
     if value > today:
-        end_of_week = today + timedelta(days=7-today.isoweekday())
+        end_of_week = today + timedelta(days=7 - today.isoweekday())
         if value <= end_of_week:
             # return the name of the day (Wednesday)
             return u'this %s' % template.defaultfilters.date(value, "l")
@@ -414,7 +425,7 @@ def super_fuzzydate(value):
             return template.defaultfilters.date(value, "F")
 
         # the last day of next year
-        end_of_next_year = date(today.year+1, 12, 31)
+        end_of_next_year = date(today.year + 1, 12, 31)
         if value <= end_of_next_year:
             return u'next %s' % template.defaultfilters.date(value, "F")
 
@@ -423,6 +434,7 @@ def super_fuzzydate(value):
         # TODO add the past
         return fuzzydate(value)
 super_fuzzydate.is_safe = True
+
 
 @smart_filter
 def typogrify(text):
@@ -447,9 +459,11 @@ def typogrify(text):
 
     return text
 
+
 def _test():
     import doctest
     doctest.testmod()
+
 
 if __name__ == "__main__":
     _test()

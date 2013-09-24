@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 VERSION = '1.3'
 
@@ -9,11 +9,11 @@ setup(
     author='Chris Drackett',
     author_email='chris@tiltshiftstudio.com',
     url='http://github.com/chrisdrackett/django-typogrify',
-    packages = [
+    packages=[
         "typogrify",
         "typogrify.templatetags",
     ],
-    install_requires = [
+    install_requires=[
         'smartypants>=1.6'
     ],
     classifiers=[
