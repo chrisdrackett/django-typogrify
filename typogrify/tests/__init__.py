@@ -1,1 +1,1 @@
-from typogrify.tests.fuzzydate import *
+from typogrify.tests.fuzzydate import *  # NOQA
