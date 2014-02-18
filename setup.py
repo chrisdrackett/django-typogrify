@@ -14,7 +14,7 @@ setup(
         "typogrify.templatetags",
     ],
     install_requires=[
-        'smartypants>=1.6'
+        'smartypants>=1.8.3'
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
