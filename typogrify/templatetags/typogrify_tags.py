@@ -435,6 +435,43 @@ def super_fuzzydate(value):
         return fuzzydate(value)
 super_fuzzydate.is_safe = True
 
+@register.filter
+def text_whole_number(value):
+    """
+    Takes a whole number, and if its less than 10, writes it out in text.
+
+    english only for now.
+    """
+
+    try:
+        value = int(value)
+    except ValueError:
+        # Not an int
+        return value
+
+    if value <= 10:
+        if value == 1:
+            value = "one"
+        elif value == 2:
+            value = "two"
+        elif value == 3:
+            value = "three"
+        elif value == 4:
+            value = "four"
+        elif value == 5:
+            value = "five"
+        elif value == 6:
+            value = "six"
+        elif value == 7:
+            value = "seven"
+        elif value == 8:
+            value = "eight"
+        elif value == 9:
+            value = "nine"
+        elif value == 10:
+            value = "ten"
+    return value
+text_whole_number.is_safe = True
 
 @smart_filter
 def typogrify(text):
