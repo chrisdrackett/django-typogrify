@@ -8,7 +8,7 @@ from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.utils.html import conditional_escape
 from django.utils.translation import ungettext, ugettext
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 
 import typogrify.titlecase as _titlecase
 
@@ -486,7 +486,7 @@ def typogrify(text):
     >>> conditional_escape(typogrify('<h2>"Jayhawks" & KU fans act extremely obnoxiously</h2>'))
     u'<h2><span class="dquo">&#8220;</span>Jayhawks&#8221; <span class="amp">&amp;</span> <span class="caps">KU</span> fans act extremely&nbsp;obnoxiously</h2>'
     """
-    text = force_unicode(text)
+    text = force_text(text)
     text = amp(text)
     text = widont(text)
     text = smartypants(text)
