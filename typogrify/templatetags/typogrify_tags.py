@@ -1,14 +1,14 @@
-import re
 import calendar
+import re
 from datetime import date, timedelta
-import smartypants as _smartypants
 
+import smartypants as _smartypants
 from django import template
 from django.conf import settings
-from django.utils.safestring import mark_safe
-from django.utils.html import conditional_escape
-from django.utils.translation import ungettext, ugettext
 from django.utils.encoding import force_text
+from django.utils.html import conditional_escape
+from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext, ungettext
 
 import typogrify.titlecase as _titlecase
 

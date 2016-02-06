@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
-from django.test import TestCase
 from django.conf import settings
+from django.test import TestCase
 
 from typogrify.templatetags.typogrify_tags import fuzzydate
 

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import unittest
-import sys
 import re
+import sys
+import unittest
 
 SMALL = 'a|an|and|as|at|but|by|en|for|if|in|of|on|or|the|to|v\.?|via|vs\.?'
 PUNCT = "[!\"#$%&'‘()*+,-./:;?@[\\\\\\]_`{|}~]"
