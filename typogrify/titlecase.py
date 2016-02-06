@@ -57,6 +57,7 @@ def titlecase(text):
 
 
 class TitlecaseTests(unittest.TestCase):
+
     """Tests to ensure titlecase follows all of the rules"""
 
     def test_q_and_a(self):

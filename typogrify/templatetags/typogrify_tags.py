@@ -64,11 +64,13 @@ def amp(text, autoescape=None):
     # it kinda sucks but it fixes the standalone amps in attributes bug
     tag_pattern = '</?\w+((\s+\w+(\s*=\s*(?:".*?"|\'.*?\'|[^\'">\s]+))?)+\s*|\s*)/?>'
     amp_finder = re.compile(r"(\s|&nbsp;)(&|&amp;|&\#38;)(\s|&nbsp;)")
-    intra_tag_finder = re.compile(r'(?P<prefix>(%s)?)(?P<text>([^<]*))(?P<suffix>(%s)?)' % (tag_pattern, tag_pattern))
+    intra_tag_finder = re.compile(
+        r'(?P<prefix>(%s)?)(?P<text>([^<]*))(?P<suffix>(%s)?)' % (tag_pattern, tag_pattern))
 
     def _amp_process(groups):
         prefix = groups.group('prefix') or ''
-        text = amp_finder.sub(r"""\1<span class="amp">&amp;</span>\3""", groups.group('text'))
+        text = amp_finder.sub(
+            r"""\1<span class="amp">&amp;</span>\3""", groups.group('text'))
         suffix = groups.group('suffix') or ''
         return prefix + text + suffix
     return intra_tag_finder.sub(_amp_process, text)
@@ -127,7 +129,8 @@ def caps(text):
                 tail = ''
             return """<span class="caps">%s</span>%s""" % (caps, tail)
 
-    tags_to_skip_regex = re.compile("<(/)?(?:pre|code|kbd|script|math)[^>]*>", re.IGNORECASE)
+    tags_to_skip_regex = re.compile(
+        "<(/)?(?:pre|code|kbd|script|math)[^>]*>", re.IGNORECASE)
 
     for token in tokens:
         if token[0] == "tag":
@@ -341,11 +344,12 @@ def fuzzydate(value, cutoff=180):
 
     if abs(delta.days) <= cutoff:
         for i, (chunk, name) in enumerate(chunks):
-                if abs(delta.days) >= chunk:
-                    count = abs(round(delta.days / chunk, 0))
-                    break
+            if abs(delta.days) >= chunk:
+                count = abs(round(delta.days / chunk, 0))
+                break
 
-        date_str = ugettext('%(number)d %(type)s') % {'number': count, 'type': name(count)}
+        date_str = ugettext('%(number)d %(type)s') % {
+            'number': count, 'type': name(count)}
 
         if delta.days > 0:
             return "in " + date_str
@@ -396,7 +400,9 @@ def super_fuzzydate(value):
             # return the name of the day(Next Wednesday)
             return u"next %s" % template.defaultfilters.date(value, "l")
 
-        end_of_month = today + timedelta(calendar.monthrange(today.year, today.month)[1] - today.day)
+        end_of_month = today + \
+            timedelta(
+                calendar.monthrange(today.year, today.month)[1] - today.day)
         if value <= end_of_month:
             # return the number of weeks (in two weeks)
             if value <= end_of_next_week + timedelta(weeks=1):
@@ -413,7 +419,8 @@ def super_fuzzydate(value):
         else:
             next_month = today.month + 1
 
-        end_of_next_month = date(today.year, next_month, calendar.monthrange(today.year, today.month)[1])
+        end_of_next_month = date(
+            today.year, next_month, calendar.monthrange(today.year, today.month)[1])
         if value <= end_of_next_month:
             # if we're in next month
             return u'next month'
@@ -434,6 +441,7 @@ def super_fuzzydate(value):
         # TODO add the past
         return fuzzydate(value)
 super_fuzzydate.is_safe = True
+
 
 @register.filter
 def text_whole_number(value):
@@ -472,6 +480,7 @@ def text_whole_number(value):
             value = "ten"
     return value
 text_whole_number.is_safe = True
+
 
 @smart_filter
 def typogrify(text):
