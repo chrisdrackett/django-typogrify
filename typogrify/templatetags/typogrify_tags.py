@@ -4,6 +4,7 @@ import re
 from datetime import date, timedelta
 
 import smartypants as _smartypants
+import typogrify.titlecase as _titlecase
 from django import template
 from django.conf import settings
 from django.utils.encoding import force_text
@@ -11,9 +12,12 @@ from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ungettext
 
-import typogrify.titlecase as _titlecase
-
 register = template.Library()
+
+
+__all__ = ['amp', 'caps', 'date', 'fuzzydate', 'initial_quotes',
+           'number_suffix', 'smart_filter', 'super_fuzzydate', 'titlecase',
+           'widont']
 
 
 def smart_filter(fn):
