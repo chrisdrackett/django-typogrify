@@ -1,12 +1,13 @@
+# -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
 
-from django.test import TestCase
 from django.conf import settings
-
+from django.test import TestCase
 from typogrify.templatetags.typogrify_tags import fuzzydate
 
 
-class TestFuzzyDate(TestCase):
+class TestFuzzydate(TestCase):
+
     def setUp(self):
         settings.DATE_FORMAT = "F jS, Y"
 

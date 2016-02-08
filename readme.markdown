@@ -18,7 +18,7 @@ Installation
 
 1. checkout the project into a folder called `typogrify` on your python path:
 
-    git clone git@github.com:chrisdrackett/django-typogrify.git typogrify
+        git clone git@github.com:chrisdrackett/django-typogrify.git typogrify
 
 2. Add 'typogrify' to your INSTALLED_APPS setting.
 
