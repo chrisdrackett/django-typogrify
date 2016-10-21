@@ -29,7 +29,7 @@ Included filters
 amp
 ---
 
-Wraps ampersands in HTML with <span class="amp"> so they can be
+Wraps ampersands in HTML with `<span class="amp"></span>` so they can be
 styled with CSS. Ampersands are also normalized to &amp;. Requires
 ampersands to have whitespace or an &nbsp; on both sides. Will not
 change any ampersand which has already been wrapped in this fashion.
@@ -37,14 +37,14 @@ change any ampersand which has already been wrapped in this fashion.
 caps
 ----
 
-Wraps multiple capital letters in <span class="caps"> so they can
+Wraps multiple capital letters in `<span class="caps"></span>` so they can
 be styled with CSS.
 
 initial_quotes
 --------------
 
-Wraps initial quotes in <span class="dquo"> for double quotes or
-<span class="quo"> for single quotes. Works inside these block
+Wraps initial quotes in `<span class="dquo"></span>` for double quotes or
+`<span class="quo"></span>` for single quotes. Works inside these block
 elements:
 
 * h1, h2, h3, h4, h5, h6
@@ -68,7 +68,7 @@ widont
 ------
 
 Based on Shaun Inman's PHP utility of the same name, replaces the
-space between the last two words in a string with &nbsp; to avoid
+space between the last two words in a string with `&nbsp;` to avoid
 a final line of text with only one word.
 
 Works inside these block elements:
@@ -90,7 +90,7 @@ http://daringfireball.net/2008/05/title_case
 number_suffix
 -------------
 
-wraps number suffix's in <span class="ord"></span> so they can be styled.
+wraps number suffix's in `<span class="ord"></span>` so they can be styled.
 
 fuzzydate
 ---------
