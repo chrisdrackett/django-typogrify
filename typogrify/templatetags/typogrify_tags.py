@@ -5,12 +5,14 @@ from datetime import date, timedelta
 
 import smartypants as _smartypants
 import typogrify.titlecase as _titlecase
+from num2words import num2words
+
 from django import template
 from django.conf import settings
 from django.utils.encoding import force_text
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext, ungettext
+from django.utils.translation import ugettext, ungettext, get_language
 
 register = template.Library()
 
@@ -451,9 +453,7 @@ super_fuzzydate.is_safe = True
 @register.filter
 def text_whole_number(value):
     """
-    Takes a whole number, and if its less than 10, writes it out in text.
-
-    english only for now.
+    Takes a whole number and writes it out in text.
     """
 
     try:
@@ -462,28 +462,16 @@ def text_whole_number(value):
         # Not an int
         return value
 
-    if value <= 10:
-        if value == 1:
-            value = "one"
-        elif value == 2:
-            value = "two"
-        elif value == 3:
-            value = "three"
-        elif value == 4:
-            value = "four"
-        elif value == 5:
-            value = "five"
-        elif value == 6:
-            value = "six"
-        elif value == 7:
-            value = "seven"
-        elif value == 8:
-            value = "eight"
-        elif value == 9:
-            value = "nine"
-        elif value == 10:
-            value = "ten"
-    return value
+    language = get_language()
+
+    if language:
+        result = num2words(value, lang=language)
+    else:
+        result = num2words(value)
+
+    return result
+
+
 text_whole_number.is_safe = True
 
 
