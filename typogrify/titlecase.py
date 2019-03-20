@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
+# from __future__ import print_function
+
+# https://github.com/chrisdrackett/django-typogrify/blob/master/typogrify/titlecase.py
+# https://daringfireball.net/2008/05/title_case
 
 import re
 import sys
@@ -31,7 +34,9 @@ def titlecase(text):
     words = re.split('\s', text)
     line = []
     for word in words:
-        if INLINE_PERIOD.search(word) or UC_ELSEWHERE.match(word):
+        if word.startswith('#') or \
+                INLINE_PERIOD.search(word) or \
+                UC_ELSEWHERE.match(word):
             line.append(word)
             continue
         if SMALL_WORDS.match(word):
