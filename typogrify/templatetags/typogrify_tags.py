@@ -9,10 +9,10 @@ from num2words import num2words
 
 from django import template
 from django.conf import settings
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext, ungettext, get_language
+from django.utils.translation import gettext, ngettext, get_language
 
 register = template.Library()
 
@@ -343,10 +343,10 @@ def fuzzydate(value, cutoff=180):
         return u"tomorrow"
 
     chunks = (
-        (365.0, lambda n: ungettext('year', 'years', n)),
-        (30.0, lambda n: ungettext('month', 'months', n)),
-        (7.0, lambda n: ungettext('week', 'weeks', n)),
-        (1.0, lambda n: ungettext('day', 'days', n)),
+        (365.0, lambda n: ngettext('year', 'years', n)),
+        (30.0, lambda n: ngettext('month', 'months', n)),
+        (7.0, lambda n: ngettext('week', 'weeks', n)),
+        (1.0, lambda n: ngettext('day', 'days', n)),
     )
 
     if abs(delta.days) <= cutoff:
@@ -355,7 +355,7 @@ def fuzzydate(value, cutoff=180):
                 count = abs(round(delta.days / chunk, 0))
                 break
 
-        date_str = ugettext('%(number)d %(type)s') % {
+        date_str = gettext('%(number)d %(type)s') % {
             'number': count, 'type': name(count)}
 
         if delta.days > 0:
@@ -488,7 +488,7 @@ def typogrify(text):
     >>> conditional_escape(typogrify('<h2>"Jayhawks" & KU fans act extremely obnoxiously</h2>'))
     u'<h2><span class="dquo">&#8220;</span>Jayhawks&#8221; <span class="amp">&amp;</span> <span class="caps">KU</span> fans act extremely&nbsp;obnoxiously</h2>'
     """
-    text = force_text(text)
+    text = force_str(text)
     text = amp(text)
     text = widont(text)
     text = smartypants(text)
